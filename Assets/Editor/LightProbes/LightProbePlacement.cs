@@ -123,7 +123,7 @@ public class LightProbePlacement : EditorWindow {
 		probeObject = (GameObject)EditorGUILayout.ObjectField ("Probe GameObject" , probeObject, typeof(GameObject), true);
 		EditorGUILayout.LabelField ("This script will automatically generate light probe positions based on the current navmesh.");
 		EditorGUILayout.LabelField ("Please make sure that you have generated a navmesh before using the script.");
-		EditorGUILayout.LabelField ("If your navmeh is very large or complex, try using 'Disable Merging' to tremendously speed up the process. Keep in mind this may produce more probes than necessary, which may negatively impact performance.");
+		EditorGUILayout.LabelField ("If your navmesh is very large or complex, try using 'Disable Merging' to tremendously speed up the process. Keep in mind this may produce more probes than necessary, which may negatively impact performance.");
 
 		if(working) {
 			EditorUtility.DisplayProgressBar ("Generating probes", current, progress);
