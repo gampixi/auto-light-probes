@@ -11,6 +11,7 @@ public class LightProbePlacement : EditorWindow {
 
 	float mergeDistance = 1;
 	GameObject probeObject;
+	bool disableMerging;
 
 	[MenuItem ("Window/Generate Light Probes")]
 	static void Init() {
@@ -34,7 +35,7 @@ public class LightProbePlacement : EditorWindow {
 
 				probe.transform.position = Vector3.zero;
 
-				NavMeshTriangulation navMesh = NavMesh.CalculateTriangulation ();
+				UnityEngine.AI.NavMeshTriangulation navMesh = UnityEngine.AI.NavMesh.CalculateTriangulation ();
 
 
 				current = "Generating necessary lists...";
@@ -63,13 +64,15 @@ public class LightProbePlacement : EditorWindow {
 						List<Vector3> nearbyProbes = new List<Vector3>();
 						nearbyProbes.Add (pro.point);
 						pro.used = true;
-						foreach(ProbeGenPoint pp in probeGen) {
-							if(pp.used == false) {
-								current = "Checking point at " + pro.point.ToString ();
-								//EditorUtility.DisplayProgressBar ("Generating probes", current, progress);
-								if(Vector3.Distance (pp.point, pro.point) <= mergeDistance) {
-									pp.used = true;
-									nearbyProbes.Add (pp.point);
+						if (!disableMerging) {
+							foreach(ProbeGenPoint pp in probeGen) {
+								if(pp.used == false) {
+									current = "Checking point at " + pro.point.ToString ();
+									//EditorUtility.DisplayProgressBar ("Generating probes", current, progress);
+									if(Vector3.Distance (pp.point, pro.point) <= mergeDistance) {
+										pp.used = true;
+										nearbyProbes.Add (pp.point);
+									}
 								}
 							}
 						}
@@ -116,9 +119,11 @@ public class LightProbePlacement : EditorWindow {
 			PlaceProbes ();
 		}
 		mergeDistance = EditorGUILayout.FloatField ("Vector merge distance",mergeDistance);
+		disableMerging = EditorGUILayout.Toggle ("Disable merging", disableMerging);
 		probeObject = (GameObject)EditorGUILayout.ObjectField ("Probe GameObject" , probeObject, typeof(GameObject), true);
 		EditorGUILayout.LabelField ("This script will automatically generate light probe positions based on the current navmesh.");
 		EditorGUILayout.LabelField ("Please make sure that you have generated a navmesh before using the script.");
+		EditorGUILayout.LabelField ("If your navmesh is very large or complex, try using 'Disable Merging' to tremendously speed up the process. Keep in mind this may produce more probes than necessary, which may negatively impact performance.");
 
 		if(working) {
 			EditorUtility.DisplayProgressBar ("Generating probes", current, progress);
